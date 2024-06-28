@@ -3,6 +3,7 @@
 
 ActuatorControl::ActuatorControl()
 {
+    configureSharedMemory();
 }
 
 ActuatorControl::~ActuatorControl()

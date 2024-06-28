@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <math.h>
-#include "SharedObject.h"
+#include "../global/SharedObject.h"
 
 class ActuatorControl
 {

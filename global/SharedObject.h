@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include <iostream>
-
+#include <stdint.h>
 #include <fcntl.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
@@ -80,3 +80,21 @@ struct EthercatStateData
     OperationModeState operationMode;
 };
 
+struct JointParameters
+{
+    double gear_ratio;
+    double motor_rated_torque;
+    double encoder_resolution;
+    double axis_direction;   
+};
+
+struct JointOutputData
+{
+    double actual_position;
+    double actual_velocity;
+    double actual_torque;
+
+    double target_position;
+    double target_velocity;
+    double target_torque;
+};

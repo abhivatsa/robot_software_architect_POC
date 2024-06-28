@@ -15,7 +15,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <ecrt.h>
-#include "SharedObject.h"
+#include "../global/SharedObject.h"
 
 struct pdoDomainMapping
 {
@@ -48,7 +48,7 @@ private:
 
     pdoDomainMapping driveOffset[NUM_JOINTS];
 
-    ServoDrives *driveObjectPtr[4];
+    ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
 
     void checkDomainState();
