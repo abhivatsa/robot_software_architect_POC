@@ -11,6 +11,14 @@
 
 constexpr int NUM_JOINTS = 4; // Change this to the desired number of joints
 
+
+enum class LogicState
+{
+    OK,
+    NOT_OK,
+    NOT_EVAL,
+};
+
 enum class FieldbusState
 {
     INIT,
@@ -71,6 +79,7 @@ struct ServoDrives
     uint32_t product_code;
     uint16_t alias;
     uint16_t position;
+
 };
 
 struct EthercatStateData
@@ -79,6 +88,13 @@ struct EthercatStateData
     bool allDrivesOpEnabled;
     OperationModeState operationMode;
 };
+
+struct LogicStateData
+{
+    LogicState state;
+    bool allDriveReady;
+};
+
 
 struct JointParameters
 {

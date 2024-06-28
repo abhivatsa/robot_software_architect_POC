@@ -1,0 +1,1 @@
+/usr/bin/c++   -pthread   CMakeFiles/controller.dir/control.cpp.o  -o controller  -lrt 

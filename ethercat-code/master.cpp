@@ -5,17 +5,23 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    std::cout<<"line 8 "<<std::endl;
     // Create an instance of the Master class
     EthercatMaster ecat_master;
 
+    std::cout<<"line 12"<<std::endl;
     // Run the main functionality of your program
     ecat_master.run();
+
+    std::cout<<"line 16"<<std::endl;
 
     return 0; // Indicate successful program execution
 }
 
 EthercatMaster::EthercatMaster()
 {
+
+    std::cout<<"line 24 "<<std::endl;
     master = ecrt_request_master(0);
     if (!master)
     {
@@ -45,12 +51,21 @@ EthercatMaster::EthercatMaster()
     {
         ec_slave_config_t *sc;
 
-        if (!(sc = ecrt_master_slave_config(master, (driveObjectPtr[jnt_ctr]->alias), driveObjectPtr[jnt_ctr]->position,
+        std::cout<<"line 54 ************"<<std::endl;
+
+        std::cout<<"alias : "<<driveObjectPtr[jnt_ctr]->alias<<std::endl;
+        std::cout<<"position : "<<driveObjectPtr[jnt_ctr]->position<<std::endl;
+        std::cout<<"vendor_id : "<<driveObjectPtr[jnt_ctr]->vendor_id<<std::endl;
+        std::cout<<"product_code : "<<driveObjectPtr[jnt_ctr]->product_code<<std::endl;
+
+        if (!(sc = ecrt_master_slave_config(master, driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position,
                                             driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code)))
         {
             fprintf(stderr, "Failed to get slave configuration.\n");
             return;
         }
+
+        std::cout<<"line 63 "<<std::endl;
 
         pdoMappingSlave(sc);
 

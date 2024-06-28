@@ -17,24 +17,20 @@
 #include <math.h>
 #include "../global/SharedObject.h"
 
-class ActuatorControl
+class DriveLogic
 {
-public:
-    ActuatorControl();
-    ~ActuatorControl();
-    void run();
-
 private:
     JointParameters driveList[NUM_JOINTS];
     ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
-    JointOutputData *jointDataPtr[NUM_JOINTS];
+    LogicStateData *logicStateDataPtr;
+    JointOutputData jointData[NUM_JOINTS];
 
     void configureSharedMemory();
     void createSharedMemory(int &shm_fd, const char *name, int size);
     void mapSharedMemory(void *&ptr, int shm_fd, int size);
-
-    void readDriveData();
-    void writeDriveData();
-    void initializeWriteData();
+public:
+    DriveLogic(/* args */);
+    ~DriveLogic();
+    void run();
 };

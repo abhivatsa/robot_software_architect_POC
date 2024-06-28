@@ -142,34 +142,36 @@ void EthercatMaster::handleOperationalState()
             }
             if (fieldbusSharedDataPtr->allDrivesOpEnabled)
             {
-                switch (fieldbusSharedDataPtr->operationMode)
-                {
-                case OperationModeState::POSITION_MODE:
-                    for (int i = 0; i < NUM_JOINTS; i++)
-                    {
-                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::POSITION_MODE);
-                        EC_WRITE_S32(domainPd + driveOffset[i].target_position, driveObjectPtr[i]->target_position);
-                    }
-                    break;
+                std::cout<<"mode of operation : "<<(int)(fieldbusSharedDataPtr->operationMode)<<std::endl;
+                std::cout<<"target position : "<<driveObjectPtr[0]->target_position<<std::endl;
+                // switch (fieldbusSharedDataPtr->operationMode)
+                // {
+                // case OperationModeState::POSITION_MODE:
+                //     for (int i = 0; i < NUM_JOINTS; i++)
+                //     {
+                //         EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::POSITION_MODE);
+                //         EC_WRITE_S32(domainPd + driveOffset[i].target_position, driveObjectPtr[i]->target_position);
+                //     }
+                //     break;
 
-                case OperationModeState::VELOCITY_MODE:
-                    for (int i = 0; i < NUM_JOINTS; i++)
-                    {
-                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::VELOCITY_MODE);
-                        EC_WRITE_S32(domainPd + driveOffset[i].target_velocity, driveObjectPtr[i]->target_velocity);
-                    }
-                    break;
+                // case OperationModeState::VELOCITY_MODE:
+                //     for (int i = 0; i < NUM_JOINTS; i++)
+                //     {
+                //         EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::VELOCITY_MODE);
+                //         EC_WRITE_S32(domainPd + driveOffset[i].target_velocity, driveObjectPtr[i]->target_velocity);
+                //     }
+                //     break;
                 
-                case OperationModeState::TORQUE_MODE:
-                    for (int i = 0; i < NUM_JOINTS; i++)
-                    {
-                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::TORQUE_MODE);
-                        EC_WRITE_S16(domainPd + driveOffset[i].target_torque, driveObjectPtr[i]->target_torque);
-                    }
-                    break;
-                default:
-                    break;
-                }
+                // case OperationModeState::TORQUE_MODE:
+                //     for (int i = 0; i < NUM_JOINTS; i++)
+                //     {
+                //         EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::TORQUE_MODE);
+                //         EC_WRITE_S16(domainPd + driveOffset[i].target_torque, driveObjectPtr[i]->target_torque);
+                //     }
+                //     break;
+                // default:
+                //     break;
+                // }
             }
 
             break;
@@ -178,6 +180,7 @@ void EthercatMaster::handleOperationalState()
             break;
         }
     }
+
 }
 
 void EthercatMaster::handleErrorState()
