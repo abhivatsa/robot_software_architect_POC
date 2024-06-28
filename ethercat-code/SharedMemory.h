@@ -1,6 +1,6 @@
 #pragma once
 
-#include <master.h>
+#include "master.h"
 
 void EthercatMaster::configureSharedMemory()
 {

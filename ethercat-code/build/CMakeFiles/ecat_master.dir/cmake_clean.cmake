@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ecat_master.dir/master.cpp.o"
+  "CMakeFiles/ecat_master.dir/master.cpp.o.d"
   "ecat_master"
   "ecat_master.pdb"
 )
