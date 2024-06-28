@@ -48,7 +48,7 @@ private:
 
     pdoDomainMapping driveOffset[NUM_JOINTS];
 
-    ServoDrives *driveObjectPtr[4];
+    ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
 
     void checkDomainState();

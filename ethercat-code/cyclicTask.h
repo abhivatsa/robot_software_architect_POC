@@ -51,7 +51,6 @@ void EthercatMaster::cyclicTask()
         ecrt_domain_queue(domain);
         ecrt_master_send(master);
         wait_rest_of_period(&pinfo);
-
     }
 
     return;
@@ -80,21 +79,119 @@ void EthercatMaster::do_rt_task()
 
 void EthercatMaster::handleNotReadyState()
 {
-    
+    // checking if all the statusword are in SWITCH_ON_DISABLED
+
+    for (int i = 0; i < NUM_JOINTS; i++)
+    {
+        if (readDriveState(i) != StatusWordValues::SW_SWITCH_ON_DISABLED)
+        {
+            fieldbusSharedDataPtr->state = FieldbusState::ERROR;
+            return;
+        }
+    }
 }
 
 void EthercatMaster::handleReadyState()
 {
-    
+    for (int i = 0; i < NUM_JOINTS; i++)
+    {
+        switch (readDriveState(i))
+        {
+        case StatusWordValues::SW_SWITCH_ON_DISABLED:
+            transitionToState(ControlWordValues::CW_READY_TO_SWITCH_ON, i);
+            break;
+        case StatusWordValues::SW_READY_TO_SWITCH_ON:
+            transitionToState(ControlWordValues::CW_SWITCH_ON, i);
+            break;
+        case StatusWordValues::SW_SWITCHED_ON:
+            for (int i = 0; i < NUM_JOINTS; i++)
+            {
+                driveObjectPtr[i]->actual_position = EC_READ_S32(domainPd + driveOffset[i].position_actual_value);
+                driveObjectPtr[i]->actual_velocity = EC_READ_S32(domainPd + driveOffset[i].velocity_actual_value);
+                driveObjectPtr[i]->actual_torque = EC_READ_S16(domainPd + driveOffset[i].torque_actual_value);
+            }
+            break;
+        default:
+            fieldbusSharedDataPtr->state = FieldbusState::ERROR;
+            break;
+        }
+    }
 }
 
 void EthercatMaster::handleOperationalState()
 {
- 
-}
+    for (int i = 0; i < NUM_JOINTS; i++)
+    {
+        switch (readDriveState(i))
+        {
+        case StatusWordValues::SW_SWITCHED_ON:
+            transitionToState(ControlWordValues::CW_ENABLE_OPERATION, i);
+            for (int i = 0; i < NUM_JOINTS; i++)
+            {
+                driveObjectPtr[i]->actual_position = EC_READ_S32(domainPd + driveOffset[i].position_actual_value);
+                driveObjectPtr[i]->actual_velocity = EC_READ_S32(domainPd + driveOffset[i].velocity_actual_value);
+                driveObjectPtr[i]->actual_torque = EC_READ_S16(domainPd + driveOffset[i].torque_actual_value);
+            }
+            break;
+        case StatusWordValues::SW_OPERATION_ENABLED:
+            for (int i = 0; i < NUM_JOINTS; i++)
+            {
+                driveObjectPtr[i]->actual_position = EC_READ_S32(domainPd + driveOffset[i].position_actual_value);
+                driveObjectPtr[i]->actual_velocity = EC_READ_S32(domainPd + driveOffset[i].velocity_actual_value);
+                driveObjectPtr[i]->actual_torque = EC_READ_S16(domainPd + driveOffset[i].torque_actual_value);
+            }
+            if (fieldbusSharedDataPtr->allDrivesOpEnabled)
+            {
+                switch (fieldbusSharedDataPtr->operationMode)
+                {
+                case OperationModeState::POSITION_MODE:
+                    for (int i = 0; i < NUM_JOINTS; i++)
+                    {
+                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::POSITION_MODE);
+                        EC_WRITE_S32(domainPd + driveOffset[i].target_position, driveObjectPtr[i]->target_position);
+                    }
+                    break;
 
+                case OperationModeState::VELOCITY_MODE:
+                    for (int i = 0; i < NUM_JOINTS; i++)
+                    {
+                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::VELOCITY_MODE);
+                        EC_WRITE_S32(domainPd + driveOffset[i].target_velocity, driveObjectPtr[i]->target_velocity);
+                    }
+                    break;
+                
+                case OperationModeState::TORQUE_MODE:
+                    for (int i = 0; i < NUM_JOINTS; i++)
+                    {
+                        EC_WRITE_U16(domainPd + driveOffset[i].modes_of_operation, (int)OperationModeState::TORQUE_MODE);
+                        EC_WRITE_S16(domainPd + driveOffset[i].target_torque, driveObjectPtr[i]->target_torque);
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            break;
+        default:
+            fieldbusSharedDataPtr->state = FieldbusState::ERROR;
+            break;
+        }
+    }
+}
 
 void EthercatMaster::handleErrorState()
 {
-    
+    // user needs to approve the fault , added later
+    for (int i = 0; i < NUM_JOINTS; i++)
+    {
+        if (readDriveState(i) == StatusWordValues::SW_FAULT)
+        {
+            transitionToState(ControlWordValues::CW_RESET, i);
+        }
+        else if (readDriveState(i) != StatusWordValues::SW_SWITCH_ON_DISABLED)
+        {
+            transitionToState(ControlWordValues::CW_DISABLE_VOLTAGE, i);
+        }
+    }
 }

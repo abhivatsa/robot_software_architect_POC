@@ -30,25 +30,26 @@ enum class OperationModeState
 
 enum class StatusWordValues : uint16_t
 {
-    SW_NOT_READY_TO_SWITCH_ON = 0x0000,
-    SW_SWITCH_ON_DISABLED = 0x0040,
-    SW_READY_TO_SWITCH_ON = 0x0021,
-    SW_SWITCHED_ON = 0x0023,
-    SW_OPERATION_ENABLED = 0x0027,
-    SW_QUICK_STOP_ACTIVE = 0x0007,
-    SW_FAULT_REACTION_ACTIVE = 0x000F,
-    SW_FAULT = 0x0008
+    SW_NOT_READY_TO_SWITCH_ON = 0,
+    SW_SWITCH_ON_DISABLED = 64,
+    SW_READY_TO_SWITCH_ON = 33,
+    SW_SWITCHED_ON = 35,
+    SW_OPERATION_ENABLED = 39,
+    SW_QUICK_STOP_ACTIVE = 7,
+    SW_FAULT_REACTION_ACTIVE = 15,
+    SW_FAULT = 8
     // Add more status word values as needed
 };
 
 enum class ControlWordValues : uint16_t
 {
-    CW_SHUTDOWN = 0x06,
-    CW_SWITCH_ON = 0x07,
-    CW_ENABLE_OPERATION = 0x0F,
-    CW_DISABLE_VOLTAGE = 0x00,
-    CW_QUICK_STOP = 0x02,
-    CW_RESET = 0x80,
+    CW_SHUTDOWN = 6,
+    CW_READY_TO_SWITCH_ON=6,
+    CW_SWITCH_ON = 7,
+    CW_ENABLE_OPERATION = 15,
+    CW_DISABLE_VOLTAGE = 0,
+    CW_QUICK_STOP = 2,
+    CW_RESET = 128,
     // Add more control word values as needed
 };
 
@@ -75,5 +76,7 @@ struct ServoDrives
 struct EthercatStateData
 {
     FieldbusState state;
+    bool allDrivesOpEnabled;
+    OperationModeState operationMode;
 };
 

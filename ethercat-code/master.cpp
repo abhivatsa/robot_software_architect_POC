@@ -1,5 +1,6 @@
 #include "cyclicTask.h"
 #include "SharedMemory.h"
+
 using namespace std;
 
 int main(int argc, char **argv)
@@ -44,8 +45,8 @@ EthercatMaster::EthercatMaster()
     {
         ec_slave_config_t *sc;
 
-        if (!(sc = ecrt_master_slave_config(master, driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position,
-                                            driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code)))
+        if (!(sc = ecrt_master_slave_config(master, (driveObjectPtr[jnt_ctr]->alias), driveObjectPtr[jnt_ctr]->position,
+                                            driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code)))
         {
             fprintf(stderr, "Failed to get slave configuration.\n");
             return;
@@ -55,15 +56,15 @@ EthercatMaster::EthercatMaster()
 
         ec_pdo_entry_reg_t domain_regs[] = {
 
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6041, 0, &driveOffset[jnt_ctr].statusword},            // 6041 0 statusword
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6064, 0, &driveOffset[jnt_ctr].position_actual_value}, // 6064 0 pos_act_val
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x606C, 0, &driveOffset[jnt_ctr].velocity_actual_value}, // 606C 0 vel_act_val
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6077, 0, &driveOffset[jnt_ctr].torque_actual_value},   // 6077 0 torq_act_val check this
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6040, 0, &driveOffset[jnt_ctr].controlword},           // 6040 0 control word
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6060, 0, &driveOffset[jnt_ctr].modes_of_operation},    // 6060 0 mode_of_operation
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x6071, 0, &driveOffset[jnt_ctr].target_torque},         // 6071 0 target torque
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x607A, 0, &driveOffset[jnt_ctr].target_position},       // 607A 0 target position
-            {driveObject[jnt_ctr].alias, driveObject[jnt_ctr].position, driveObject[jnt_ctr].vendor_id, driveObject[jnt_ctr].product_code, 0x60FF, 0, &driveOffset[jnt_ctr].target_velocity},       // 60FF 0 target velocity
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6041, 0, &driveOffset[jnt_ctr].statusword},            // 6041 0 statusword
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6064, 0, &driveOffset[jnt_ctr].position_actual_value}, // 6064 0 pos_act_val
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x606C, 0, &driveOffset[jnt_ctr].velocity_actual_value}, // 606C 0 vel_act_val
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6077, 0, &driveOffset[jnt_ctr].torque_actual_value},   // 6077 0 torq_act_val check this
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6040, 0, &driveOffset[jnt_ctr].controlword},           // 6040 0 control word
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6060, 0, &driveOffset[jnt_ctr].modes_of_operation},    // 6060 0 mode_of_operation
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x6071, 0, &driveOffset[jnt_ctr].target_torque},         // 6071 0 target torque
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x607A, 0, &driveOffset[jnt_ctr].target_position},       // 607A 0 target position
+            {driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position, driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code, 0x60FF, 0, &driveOffset[jnt_ctr].target_velocity},       // 60FF 0 target velocity
             {}};
 
         // ecrt_slave_config_dc(sc, 0x0300, 1000000, 0, 0, 0);
