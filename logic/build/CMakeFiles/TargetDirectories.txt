@@ -1,3 +1,0 @@
-/home/abhishek/NewArchitect/logic/build/CMakeFiles/rebuild_cache.dir
-/home/abhishek/NewArchitect/logic/build/CMakeFiles/edit_cache.dir
-/home/abhishek/NewArchitect/logic/build/CMakeFiles/logicApp.dir
