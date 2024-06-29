@@ -10,13 +10,13 @@ void EthercatMaster::configureSharedMemory()
     createSharedMemory(shm_fd_driveObject, "ServoDrivesData", NUM_JOINTS*sizeof(ServoDrives));
     createSharedMemory(shm_fd_fieldbusSharedData, "EthercatStateData", sizeof(EthercatStateData));
 
-    mapSharedMemory((void *&)fieldbusSharedDataPtr, shm_fd_fieldbusSharedData, sizeof(EthercatStateData));
+    fieldbusSharedDataPtr = static_cast<EthercatStateData*>(mapSharedMemory(shm_fd_fieldbusSharedData, sizeof(EthercatStateData)));
+    ServoDrives* driveObjectBasePtr = static_cast<ServoDrives*>(mapSharedMemory(shm_fd_driveObject, NUM_JOINTS * sizeof(ServoDrives)));
 
-    for (int i = 0; i < NUM_JOINTS; i++) {
-        mapSharedMemory((void *&)driveObjectPtr[i], shm_fd_driveObject, sizeof(ServoDrives));
+    for (int i = 0; i < NUM_JOINTS; ++i) {
+        driveObjectPtr[i] = &driveObjectBasePtr[i];
     }
 
-    // initializeSharedData();
 }
 
 void EthercatMaster::createSharedMemory(int &shm_fd, const char *name, int size)
@@ -29,13 +29,12 @@ void EthercatMaster::createSharedMemory(int &shm_fd, const char *name, int size)
     ftruncate(shm_fd, size);
 }
 
-void EthercatMaster::mapSharedMemory(void *&ptr, int shm_fd, int size)
-{
-    ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-    if (ptr == MAP_FAILED)
-    {
+void* EthercatMaster::mapSharedMemory(int shm_fd, int size) {
+    void* ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (ptr == MAP_FAILED) {
         throw std::runtime_error("Failed to map shared memory.");
     }
+    return ptr;
 }
 
 // void EthercatMaster::initializeSharedData()

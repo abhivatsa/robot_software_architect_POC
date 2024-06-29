@@ -17,7 +17,7 @@ private:
 
     void configureSharedMemory();
     void createSharedMemory(int &shm_fd, const char *name, int size);
-    void mapSharedMemory(void *&ptr, int shm_fd, int size);
+    void* mapSharedMemory(int shm_fd, int size);
 
 public:
     Logic(/* args */);

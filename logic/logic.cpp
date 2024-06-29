@@ -11,14 +11,6 @@ Logic::Logic(/* args */)
     fieldbusSharedDataPtr->operationMode = OperationModeState::POSITION_MODE;
     fieldbusSharedDataPtr->state = FieldbusState::INIT;
 
-    // for (int jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++)
-    // {
-    //     driveObjectPtr[jnt_ctr]->alias = 0;
-    //     driveObjectPtr[jnt_ctr]->position = jnt_ctr;
-    // }
-
-
-
     for (int jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++)
     {
         driveObjectPtr[jnt_ctr]->actual_position = 0;
@@ -27,28 +19,20 @@ Logic::Logic(/* args */)
         driveObjectPtr[jnt_ctr]->target_position = 0;
         driveObjectPtr[jnt_ctr]->target_velocity = 0;
         driveObjectPtr[jnt_ctr]->target_torque = 0;
-        // driveObjectPtr[jnt_ctr]->controlword = ControlWordValues::CW_DISABLE_VOLTAGE;
-        // driveObjectPtr[jnt_ctr]->statusword = StatusWordValues::SW_NOT_READY_TO_SWITCH_ON;
-        // driveObjectPtr[jnt_ctr]->mode_of_operation = OperationModeState::POSITION_MODE;
+        driveObjectPtr[jnt_ctr]->controlword = ControlWordValues::CW_DISABLE_VOLTAGE;
+        driveObjectPtr[jnt_ctr]->statusword = StatusWordValues::SW_NOT_READY_TO_SWITCH_ON;
+        driveObjectPtr[jnt_ctr]->mode_of_operation = OperationModeState::POSITION_MODE;
         driveObjectPtr[jnt_ctr]->alias = 0;
         driveObjectPtr[jnt_ctr]->position = jnt_ctr;
         driveObjectPtr[jnt_ctr]->vendor_id = 0x0000029c;
         driveObjectPtr[jnt_ctr]->product_code = 0x03831002;
-        // jointDataPtr[jnt_ctr]->actual_position = 0;
-        // jointDataPtr[jnt_ctr]->actual_velocity = 0;
-        // jointDataPtr[jnt_ctr]->actual_torque = 0;
-        // jointDataPtr[jnt_ctr]->target_position = 0;
-        // jointDataPtr[jnt_ctr]->target_velocity = 0;
-        // jointDataPtr[jnt_ctr]->target_torque = 0;
-        std::cout<<"driveObjectPtr[jnt_ctr]->position = "<<driveObjectPtr[jnt_ctr]->position<<std::endl;
+        jointDataPtr[jnt_ctr]->actual_position = 0;
+        jointDataPtr[jnt_ctr]->actual_velocity = 0;
+        jointDataPtr[jnt_ctr]->actual_torque = 0;
+        jointDataPtr[jnt_ctr]->target_position = 0;
+        jointDataPtr[jnt_ctr]->target_velocity = 0;
+        jointDataPtr[jnt_ctr]->target_torque = 0;
     }
-
-    std::cout<<"driveObjectPtr[jnt_ctr]->position = "<<driveObjectPtr[0]->position<<std::endl;
-    std::cout<<"driveObjectPtr[jnt_ctr]->position = "<<driveObjectPtr[1]->position<<std::endl;
-    std::cout<<"driveObjectPtr[jnt_ctr]->position = "<<driveObjectPtr[2]->position<<std::endl;
-    std::cout<<"driveObjectPtr[jnt_ctr]->position = "<<driveObjectPtr[3]->position<<std::endl;
-
-
 
 }
 
@@ -109,15 +93,6 @@ void Logic::do_rt_task()
     if (logicStateDataPtr->allDriveReady)
     {
         checkStateLogic();
-    }
-
-    for (unsigned int jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++){
-        // std::cout<<"jnt_ctr = "<<jnt_ctr<<std::endl;
-        // std::cout<<"alias : "<<driveObjectPtr[jnt_ctr]->alias<<std::endl;
-        // std::cout<<"position : "<<driveObjectPtr[jnt_ctr]->position<<std::endl;
-        // std::cout<<"vendor_id : "<<driveObjectPtr[jnt_ctr]->vendor_id<<std::endl;
-        // std::cout<<"product_code : "<<driveObjectPtr[jnt_ctr]->product_code<<std::endl;
-
     }
 
     driveLogic.run();

@@ -1,19 +1,15 @@
 #include "cyclicTask.h"
-#include "SharedMemory.h"
+#include "fieldbusSharedMemory.h"
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
-    std::cout<<"line 8 "<<std::endl;
     // Create an instance of the Master class
     EthercatMaster ecat_master;
 
-    std::cout<<"line 12"<<std::endl;
     // Run the main functionality of your program
     ecat_master.run();
-
-    std::cout<<"line 16"<<std::endl;
 
     return 0; // Indicate successful program execution
 }
@@ -21,7 +17,8 @@ int main(int argc, char **argv)
 EthercatMaster::EthercatMaster()
 {
 
-    std::cout<<"line 24 "<<std::endl;
+    configureSharedMemory();
+
     master = ecrt_request_master(0);
     if (!master)
     {
@@ -47,16 +44,9 @@ EthercatMaster::EthercatMaster()
         throw std::runtime_error("Failed to create process data domain.");
     }
 
-    for (uint16_t jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++)
+    for (unsigned int jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++)
     {
         ec_slave_config_t *sc;
-
-        std::cout<<"line 54 ************"<<std::endl;
-
-        std::cout<<"alias : "<<driveObjectPtr[jnt_ctr]->alias<<std::endl;
-        std::cout<<"position : "<<driveObjectPtr[jnt_ctr]->position<<std::endl;
-        std::cout<<"vendor_id : "<<driveObjectPtr[jnt_ctr]->vendor_id<<std::endl;
-        std::cout<<"product_code : "<<driveObjectPtr[jnt_ctr]->product_code<<std::endl;
 
         if (!(sc = ecrt_master_slave_config(master, driveObjectPtr[jnt_ctr]->alias, driveObjectPtr[jnt_ctr]->position,
                                             driveObjectPtr[jnt_ctr]->vendor_id, driveObjectPtr[jnt_ctr]->product_code)))
@@ -64,8 +54,6 @@ EthercatMaster::EthercatMaster()
             fprintf(stderr, "Failed to get slave configuration.\n");
             return;
         }
-
-        std::cout<<"line 63 "<<std::endl;
 
         pdoMappingSlave(sc);
 
@@ -104,8 +92,6 @@ EthercatMaster::EthercatMaster()
 
         // ecrt_slave_config_dc for assignActivate/sync0,1 cycle and shift values for each drive/slave....
     }
-
-    // configureSharedMemory();
 }
 
 EthercatMaster::~EthercatMaster()
@@ -200,8 +186,6 @@ void EthercatMaster::run()
     //     // Make a semaphore lock to open, Easy way out is sleep
     //     sleep(1);
     // }
-
-    printf("Safety Controller Started \n");
 
     cyclicTask();
 }

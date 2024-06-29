@@ -10,13 +10,15 @@ void ActuatorControl::configureSharedMemory()
 
     createSharedMemory(shm_fd_driveObject, "ServoDrivesData", NUM_JOINTS*sizeof(ServoDrives));
     createSharedMemory(shm_fd_fieldbusSharedData, "EthercatStateData", sizeof(EthercatStateData));
-    createSharedMemory(shm_fd_jointSharedData, "JointOutputData", sizeof(JointOutputData));
+    createSharedMemory(shm_fd_jointSharedData, "JointOutputData", NUM_JOINTS*sizeof(JointOutputData));
 
-    mapSharedMemory((void *&)fieldbusSharedDataPtr, shm_fd_fieldbusSharedData, sizeof(EthercatStateData));
-    mapSharedMemory((void *&)jointDataPtr, shm_fd_jointSharedData, sizeof(JointOutputData));
+    fieldbusSharedDataPtr = static_cast<EthercatStateData*>(mapSharedMemory(shm_fd_fieldbusSharedData, sizeof(EthercatStateData)));
+    ServoDrives* driveObjectBasePtr = static_cast<ServoDrives*>(mapSharedMemory(shm_fd_driveObject, NUM_JOINTS * sizeof(ServoDrives)));
+    JointOutputData* jointDataBasePtr = static_cast<JointOutputData*>(mapSharedMemory(shm_fd_jointSharedData, NUM_JOINTS * sizeof(JointOutputData)));
 
     for (int i = 0; i < NUM_JOINTS; ++i) {
-        mapSharedMemory((void *&)driveObjectPtr[i], shm_fd_driveObject, sizeof(ServoDrives));
+        driveObjectPtr[i] = &driveObjectBasePtr[i];
+        jointDataPtr[i] = &jointDataBasePtr[i];
     }
 
     // initializeSharedData();
@@ -32,14 +34,15 @@ void ActuatorControl::createSharedMemory(int &shm_fd, const char *name, int size
     ftruncate(shm_fd, size);
 }
 
-void ActuatorControl::mapSharedMemory(void *&ptr, int shm_fd, int size)
-{
-    ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-    if (ptr == MAP_FAILED)
-    {
+void* ActuatorControl::mapSharedMemory(int shm_fd, int size) {
+    void* ptr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (ptr == MAP_FAILED) {
         throw std::runtime_error("Failed to map shared memory.");
     }
+    return ptr;
 }
+
+
 
 // void EthercatMaster::initializeSharedData()
 // {

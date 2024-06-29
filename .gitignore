@@ -1,0 +1,59 @@
+# General
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Compiled Object files
+*.o
+*.obj
+*.lo
+*.a
+*.la
+*.lib
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+
+# Visual Studio
+.vscode/
+*.code-workspace
+.vscode/
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
