@@ -39,6 +39,10 @@ void EthercatMaster::cyclicTask()
 
     periodic_task_init(&pinfo);
 
+    std::cout<<"Line 42 "<<std::endl;
+
+    fieldbusSharedDataPtr->state = FieldbusState::NOT_READY;
+
     while (true)
     // while (!exitFlag)
     {
@@ -58,6 +62,11 @@ void EthercatMaster::cyclicTask()
 
 void EthercatMaster::do_rt_task()
 {
+    for (int i = 0; i < NUM_JOINTS; i++)
+    {
+        driveObjectPtr[i]->statusword = readDriveState(i);
+    }
+
     switch (fieldbusSharedDataPtr->state)
     {
     case FieldbusState::NOT_READY:
@@ -85,10 +94,13 @@ void EthercatMaster::handleNotReadyState()
     {
         if (readDriveState(i) != StatusWordValues::SW_SWITCH_ON_DISABLED)
         {
+            std::cout<<"readDriveState(i)  : "<<(readDriveState(i) == StatusWordValues::SW_NOT_READY_TO_SWITCH_ON) <<std::endl;
             fieldbusSharedDataPtr->state = FieldbusState::ERROR;
             return;
         }
     }
+
+    std::cout<<"All Drives are in Switched on"<<std::endl;
 }
 
 void EthercatMaster::handleReadyState()
@@ -188,7 +200,11 @@ void EthercatMaster::handleErrorState()
     // user needs to approve the fault , added later
     for (int i = 0; i < NUM_JOINTS; i++)
     {
-        if (readDriveState(i) == StatusWordValues::SW_FAULT)
+        if (readDriveState(i) == StatusWordValues::SW_NOT_READY_TO_SWITCH_ON){
+            std::cout<<"Drive Not Ready To Switch ON"<<std::endl;
+            return;
+        }
+        else if (readDriveState(i) == StatusWordValues::SW_FAULT)
         {
             transitionToState(ControlWordValues::CW_RESET, i);
         }

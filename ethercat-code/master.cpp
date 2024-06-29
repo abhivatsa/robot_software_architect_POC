@@ -55,6 +55,8 @@ EthercatMaster::EthercatMaster()
             return;
         }
 
+        
+
         pdoMappingSlave(sc);
 
         ec_pdo_entry_reg_t domain_regs[] = {
@@ -187,6 +189,7 @@ void EthercatMaster::run()
     //     sleep(1);
     // }
 
+    std::cout<<"Line 190"<<std::endl;
     cyclicTask();
 }
 

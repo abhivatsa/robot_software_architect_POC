@@ -131,11 +131,11 @@ void Logic::checkStateLogic()
 
     for (int jnt_ctr = 0; jnt_ctr < NUM_JOINTS; jnt_ctr++)
     {
-        if (fabs(jointDataPtr[jnt_ctr]->actual_position) > 10 * 3.14)
-        {
-            logicStateDataPtr->state = LogicState::NOT_OK;
-            return;
-        }
+        // if (fabs(jointDataPtr[jnt_ctr]->actual_position) > 10 * 3.14)
+        // {
+        //     logicStateDataPtr->state = LogicState::NOT_OK;
+        //     return;
+        // }
     }
 
     logicStateDataPtr->state = LogicState::OK;
