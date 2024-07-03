@@ -148,6 +148,10 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to get slave configuration.\n");
         return -1;
     }
+    //IMPORTANT  ----------------------------------------------------------------------------------
+
+    //This type of configuration of PDOs is not used , plz refer other file for other configuration
+    //Will result in ERROR
 
     //Now we config. the slave object such that we can modify the slaves
     //with our config. by sending SDOs when the master is activated.
