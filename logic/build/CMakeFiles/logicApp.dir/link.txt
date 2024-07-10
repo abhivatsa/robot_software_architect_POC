@@ -1,0 +1,1 @@
+/usr/bin/c++   -pthread   CMakeFiles/logicApp.dir/logic.cpp.o  -o logicApp  -lrt 
