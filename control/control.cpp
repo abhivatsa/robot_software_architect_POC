@@ -1,14 +1,13 @@
 #include "control.h"
 
-control::control(/* args */)
-{
+Control::Control()
+    : robotState(), 
+      manipulatorControl(robotState), 
+      actuatorControl(robotState) {
+    // Initialization code
 }
 
-control::~control()
-{
-}
-
-void control::cyclicTask()
+void Control::cyclicTask()
 {
     struct period_info pinfo;
 
@@ -21,7 +20,7 @@ void control::cyclicTask()
     }
 }
 
-void control::inc_period(struct period_info *pinfo)
+void Control::inc_period(struct period_info *pinfo)
 {
 
     pinfo->next_period.tv_nsec += pinfo->period_ns;
@@ -34,7 +33,7 @@ void control::inc_period(struct period_info *pinfo)
     }
 }
 
-void control::periodic_task_init(struct period_info *pinfo)
+void Control::periodic_task_init(struct period_info *pinfo)
 {
     /* for simplicity, hardcoding a 1ms period */
     pinfo->period_ns = 1000000;
@@ -42,7 +41,7 @@ void control::periodic_task_init(struct period_info *pinfo)
     clock_gettime(CLOCK_MONOTONIC, &(pinfo->next_period));
 }
 
-void control::wait_rest_of_period(struct period_info *pinfo)
+void Control::wait_rest_of_period(struct period_info *pinfo)
 {
     inc_period(pinfo);
 
@@ -50,12 +49,15 @@ void control::wait_rest_of_period(struct period_info *pinfo)
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &pinfo->next_period, NULL);
 }
 
-void control::do_rt_task()
+void Control::do_rt_task()
 {
-    actuatorControl.run();
+    manipulatorControl.updateKinematics();
+    manipulatorControl.updateDynamics();
+    actuatorControl.communicateWithEthercat();
+    // actuatorControl.run();
 }
 
-void control::run(){
+void Control::run(){
 
     // Set CPU affinity for real-time thread
     cpu_set_t cpuset;
@@ -90,14 +92,9 @@ void control::run(){
 
     cyclicTask();
     
-    // while (true){
-    //     actuatorControl.run();
-    // }
-    
-
 }
 
-void control::stackPrefault()
+void Control::stackPrefault()
 {
     unsigned char dummy[MAX_SAFE_STACK];
     memset(dummy, 0, MAX_SAFE_STACK);
@@ -105,7 +102,7 @@ void control::stackPrefault()
 
 int main(){
 
-    control controlobj;
+    Control controlobj;
     controlobj.run();
 
 }

@@ -1,17 +1,13 @@
 #include "actuatorControlSharedMemory.h"
 
-ActuatorControl::ActuatorControl()
-{
+ActuatorControl::ActuatorControl(RobotState& state)
+    : robotState(state) {
     configureSharedMemory();
+    // Initialization code
 }
 
-ActuatorControl::~ActuatorControl()
-{
-}
-
-void ActuatorControl::run()
-{
-
+void ActuatorControl::communicateWithEthercat() {
+    
     switch (fieldbusSharedDataPtr->state)
     {
     case FieldbusState::NOT_READY:
@@ -32,6 +28,7 @@ void ActuatorControl::run()
     default:
         break;
     }
+
 }
 
 void ActuatorControl::readDriveData()
@@ -43,7 +40,10 @@ void ActuatorControl::readDriveData()
         jointDataPtr[jnt_ctr]->actual_velocity = (driveObjectPtr[jnt_ctr]->actual_velocity * 2 * M_PI) / 60;
         jointDataPtr[jnt_ctr]->actual_torque = (driveObjectPtr[jnt_ctr]->actual_torque * driveList[jnt_ctr].motor_rated_torque * driveList[jnt_ctr].gear_ratio) / 1000;
 
-        std::cout<<"jnt_ctr: "<<jnt_ctr<<", driveObjectPtr->actual_position  : "<<driveObjectPtr[jnt_ctr]->actual_position<<std::endl;
+        robotState.actualJointAngles[jnt_ctr] = jointDataPtr[jnt_ctr]->actual_position;
+        robotState.actualJointVelocities[jnt_ctr] = jointDataPtr[jnt_ctr]->actual_velocity;
+        robotState.actualJointTorques[jnt_ctr] = jointDataPtr[jnt_ctr]->actual_torque;
+        
     }
 }
 
@@ -61,9 +61,9 @@ void ActuatorControl::writeDriveData()
             driveObjectPtr[jnt_ctr]->target_velocity = (int32_t)(jointDataPtr[jnt_ctr]->target_position * 60 / (2 * M_PI));
             break;
         case OperationModeState::TORQUE_MODE:
+            // robotState.targetJointTorques[jnt_ctr];
             driveObjectPtr[jnt_ctr]->target_torque = (int16_t)(jointDataPtr[jnt_ctr]->target_torque * 1000 / (driveList[jnt_ctr].gear_ratio * driveList[jnt_ctr].motor_rated_torque));
             break;
-
         default:
             break;
         }
@@ -80,3 +80,40 @@ void ActuatorControl::initializeWriteData()
         driveObjectPtr[jnt_ctr]->target_torque = 0;
     }
 }
+
+// #include "actuatorControlSharedMemory.h"
+
+// ActuatorControl::ActuatorControl()
+// {
+//     configureSharedMemory();
+// }
+
+// ActuatorControl::~ActuatorControl()
+// {
+// }
+
+// void ActuatorControl::run()
+// {
+
+//     switch (fieldbusSharedDataPtr->state)
+//     {
+//     case FieldbusState::NOT_READY:
+//         /* code */
+//         break;
+//     case FieldbusState::READY:
+//         readDriveData();
+//         initializeWriteData();
+//         break;
+//     case FieldbusState::OPERATIONAL:
+//         readDriveData();
+//         writeDriveData();
+//         break;
+//     case FieldbusState::ERROR:
+//         /* code */
+//         break;
+
+//     default:
+//         break;
+//     }
+// }
+

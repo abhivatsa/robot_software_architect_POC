@@ -1,5 +1,9 @@
-#pragma once
+#ifndef CONTROL_H
+#define CONTROL_H
 
+#include "robot_state.h"
+#include "manipulator_control.h"
+#include "actuator_control.h"
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/shm.h>
@@ -8,15 +12,10 @@
 #include <unistd.h>
 #include <bits/stdc++.h>
 #include <sys/time.h>
-#include "actuator_control.cpp"
 
-class control
-{
-private:
-    ActuatorControl actuatorControl;
+class Control {
 public:
-    control(/* args */);
-    ~control();
+    Control();
     void run();
     void stackPrefault();
 
@@ -32,7 +31,12 @@ public:
     static void periodic_task_init(struct period_info *pinfo);
     void do_rt_task();
     static void wait_rest_of_period(struct period_info *pinfo);
-    
+    // Other control-related methods
+
+private:
+    RobotState robotState;            // Shared state
+    ManipulatorControl manipulatorControl;
+    ActuatorControl actuatorControl;
 };
 
 #define MAX_SAFE_STACK (8 * 1024) /* The maximum stack size which is  \
@@ -40,3 +44,6 @@ public:
                                      faulting */
 
 volatile sig_atomic_t exitFlag = 0;
+
+
+#endif // CONTROL_H

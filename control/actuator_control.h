@@ -1,5 +1,7 @@
-#pragma once
+#ifndef ACTUATOR_CONTROL_H
+#define ACTUATOR_CONTROL_H
 
+#include "robot_state.h"
 #include <iostream>
 #include <chrono>
 #include <cstring>
@@ -17,14 +19,18 @@
 #include <math.h>
 #include "../global/SharedObject.h"
 
-class ActuatorControl
-{
+
+class ActuatorControl {
 public:
-    ActuatorControl();
-    ~ActuatorControl();
-    void run();
+    ActuatorControl(RobotState& state);
+    void communicateWithEthercat();
+    void readDriveData();
+    void writeDriveData();
+    void initializeWriteData();
+    // Other actuator-related methods
 
 private:
+    RobotState& robotState; // Reference to shared state
     JointParameters driveList[NUM_JOINTS];
     ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
@@ -34,7 +40,6 @@ private:
     void createSharedMemory(int &shm_fd, const char *name, int size);
     void* mapSharedMemory(int shm_fd, int size);
 
-    void readDriveData();
-    void writeDriveData();
-    void initializeWriteData();
 };
+
+#endif // ACTUATOR_CONTROL_H
