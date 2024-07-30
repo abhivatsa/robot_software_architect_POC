@@ -51,9 +51,13 @@ void Control::wait_rest_of_period(struct period_info *pinfo)
 
 void Control::do_rt_task()
 {
+    // std::cout<<"line 54 \n";
     manipulatorControl.updateKinematics();
+    // std::cout<<"line 56 \n";
     manipulatorControl.updateDynamics();
+    // std::cout<<"line 58 \n";
     actuatorControl.communicateWithEthercat();
+    // std::cout<<"line 60 \n";
     // actuatorControl.run();
 }
 

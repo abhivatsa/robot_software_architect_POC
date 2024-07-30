@@ -9,6 +9,7 @@
 #define MANIPULATOR_CONTROL_H
 
 #include "robot_state.h"
+#include <iostream>
 #include <math.h>
 #include <eigen3/Eigen/Dense>
 #include <vector>

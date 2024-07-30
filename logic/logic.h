@@ -10,10 +10,10 @@ class Logic
 {
 private:
     DriveLogic driveLogic;
-    ServoDrives *driveObjectPtr[4];
+    ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
     LogicStateData *logicStateDataPtr;
-    JointOutputData *jointDataPtr[4];
+    JointOutputData *jointDataPtr[NUM_JOINTS];
 
     void configureSharedMemory();
     void createSharedMemory(int &shm_fd, const char *name, int size);
@@ -38,4 +38,7 @@ public:
     static void periodic_task_init(struct period_info *pinfo);
     void do_rt_task();
     static void wait_rest_of_period(struct period_info *pinfo);
+
+    void userInput();
+    
 };

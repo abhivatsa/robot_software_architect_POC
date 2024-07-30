@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <math.h>
+#include <vector>
 #include "../global/SharedObject.h"
 
 
@@ -27,14 +28,21 @@ public:
     void readDriveData();
     void writeDriveData();
     void initializeWriteData();
+    void frictionModel(std::vector<double> &friction_torque);
     // Other actuator-related methods
 
 private:
     RobotState& robotState; // Reference to shared state
-    JointParameters driveList[NUM_JOINTS];
+
     ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
     JointOutputData *jointDataPtr[NUM_JOINTS];
+    // std::vector<double> posFrictionCoff;
+    std::array< std::array<double, 4>, NUM_JOINTS> posFrictionCoff;
+    std::array< std::array<double, 4>, NUM_JOINTS> negFrictionCoff;
+    // double posFrictionCoff[NUM_JOINTS][4];
+    // double negFrictionCoff[NUM_JOINTS][4];
+
 
     void configureSharedMemory();
     void createSharedMemory(int &shm_fd, const char *name, int size);
