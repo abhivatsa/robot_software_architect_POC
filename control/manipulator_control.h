@@ -11,48 +11,41 @@
 #include "robot_state.h"
 #include <iostream>
 #include <math.h>
+#include <array>
 #include <eigen3/Eigen/Dense>
-#include <vector>
+#include "../global/SharedObject.h"
 
-class ManipulatorControl {
+class ManipulatorControl
+{
 public:
-    ManipulatorControl(RobotState& state);
+    // Constructor
+    explicit ManipulatorControl(RobotState &state);
+
+    // Public methods
     void updateKinematics();
     void updateDynamics();
-    int computeTorque(std::vector<double> joint_pos, std::vector<double> joint_vel, std::vector<double> joint_acc,
-			std::vector<double>& joint_torque);
-	int computeTransformationMat(double joint_pos, int joint_num, Eigen::Matrix3d& rotation_mat,
-			Eigen::Vector3d& pos_mat);
-    // Other methods related to kinematics and dynamics
+
 
 private:
-    RobotState& robotState; // Reference to shared state
-    std::vector<double> alpha, a, d, theta, m;
-	std::vector<Eigen::Vector3d> pos_com;
-	std::vector<Eigen::Matrix3d> inertia_com;
+    // Private methods
+    int computeTorque(const std::array<double, NUM_JOINTS>& joint_pos,
+                      const std::array<double, NUM_JOINTS>& joint_vel,
+                      const std::array<double, NUM_JOINTS>& joint_acc,
+                      std::array<double, NUM_JOINTS>& joint_torque) noexcept;
+
+    int computeTransformationMat(double joint_pos, int joint_num,
+                                 Eigen::Matrix3d &rotation_mat, Eigen::Vector3d &pos_mat) const noexcept;
+
+    // Member variables
+    RobotState &robotState;
+
+    std::array<double, 7> alpha;
+    std::array<double, 7> a;
+    std::array<double, 7> d;
+    std::array<double, 7> theta;
+    std::array<double, 7> m;
+    std::array<Eigen::Vector3d, 7> pos_com;
+    std::array<Eigen::Matrix3d, 7> inertia_com;
 };
 
 #endif // MANIPULATOR_CONTROL_H
-
-// #pragma once
-
-
-// #include <iostream>
-// #include <math.h>
-// #include <eigen3/Eigen/Dense>
-// #include <vector>
-
-// class RecursiveNewtonEuler {
-// public:
-// 	RecursiveNewtonEuler();
-// 	virtual ~RecursiveNewtonEuler();
-// 	int computeTorque(std::vector<double> joint_pos, std::vector<double> joint_vel, std::vector<double> joint_acc,
-// 			std::vector<double>& joint_torque);
-// 	int computeTransformationMat(double joint_pos, int joint_num, Eigen::Matrix3d& rotation_mat,
-// 			Eigen::Vector3d& pos_mat);
-// private:
-// 	std::vector<double> alpha, a, d, theta, m;
-// 	std::vector<Eigen::Vector3d> pos_com;
-// 	std::vector<Eigen::Matrix3d> inertia_com;
-
-// };

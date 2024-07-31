@@ -18,8 +18,9 @@
 #include <cstdint>
 #include <math.h>
 #include <vector>
+#include <cmath>
+#include <algorithm>
 #include "../global/SharedObject.h"
-
 
 class ActuatorControl {
 public:
@@ -28,7 +29,8 @@ public:
     void readDriveData();
     void writeDriveData();
     void initializeWriteData();
-    void frictionModel(std::vector<double> &friction_torque);
+    void frictionModel(std::array<double, NUM_JOINTS> &friction_torque);
+    void initializeFrictionCoefficients();
     // Other actuator-related methods
 
 private:
@@ -37,12 +39,8 @@ private:
     ServoDrives *driveObjectPtr[NUM_JOINTS];
     EthercatStateData *fieldbusSharedDataPtr;
     JointOutputData *jointDataPtr[NUM_JOINTS];
-    // std::vector<double> posFrictionCoff;
     std::array< std::array<double, 4>, NUM_JOINTS> posFrictionCoff;
     std::array< std::array<double, 4>, NUM_JOINTS> negFrictionCoff;
-    // double posFrictionCoff[NUM_JOINTS][4];
-    // double negFrictionCoff[NUM_JOINTS][4];
-
 
     void configureSharedMemory();
     void createSharedMemory(int &shm_fd, const char *name, int size);
@@ -51,3 +49,6 @@ private:
 };
 
 #endif // ACTUATOR_CONTROL_H
+
+constexpr int VELOCITY_MAX = 4000;
+constexpr int VELOCITY_THRESHOLD = 100;
